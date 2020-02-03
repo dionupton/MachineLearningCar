@@ -36,15 +36,17 @@ public class CarController : MonoBehaviour
         startRotation = transform.eulerAngles;
         network = GetComponent<NNet>();
 
-        //TEST CODE
-        network.Initialise(LAYERS, NEURONS);
+    }
+
+
+    public void ResetWithNetwork(NNet net)
+    {
+        network = net;
+        Reset();
     }
 
     public void Reset()
     {
-
-        //TEST CODE
-        network.Initialise(LAYERS, NEURONS);
 
 
         timeSinceStart = 0f;
@@ -59,7 +61,7 @@ public class CarController : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         if(collision.transform.gameObject.tag == "Side")
-            Reset();
+            Death();
     }
 
 
@@ -80,11 +82,13 @@ public class CarController : MonoBehaviour
 
         CalculateFitness();
 
-        //a = 0;
-        //t = 0;
 
     }
 
+    private void Death()
+    {
+        GameObject.FindObjectOfType<GeneticManager>().Death(overallFitness, network);
+    }
 
     private void CalculateFitness()
     {
@@ -95,13 +99,12 @@ public class CarController : MonoBehaviour
 
         if(timeSinceStart > 20 && overallFitness < 40)
         {
-            Reset();
+            Death();
         }
 
         if(overallFitness >= 1000)
         {
-            //Saves network to JSON
-            Reset();
+            Death();
         }
     }
 
@@ -112,13 +115,20 @@ public class CarController : MonoBehaviour
         Vector3 c = (transform.forward - transform.right);
 
 
-        Ray r = new Ray(transform.position, a);
+        Ray r = new Ray(transform.GetChild(6).position, a);
         RaycastHit hit;
 
         if(Physics.Raycast(r, out hit))
         {
             aSensor = hit.distance / 30;
-            Debug.DrawLine(r.origin, hit.point, Color.red);
+            if (aSensor < 0.05f)
+            {
+                Debug.DrawLine(r.origin, hit.point, Color.red);
+            }
+            else
+            {
+                Debug.DrawLine(r.origin, hit.point, Color.green);
+            }
         }
 
         r.direction = b;
@@ -126,7 +136,14 @@ public class CarController : MonoBehaviour
         if (Physics.Raycast(r, out hit))
         {
             bSensor = hit.distance / 30;
-            Debug.DrawLine(r.origin, hit.point, Color.red);
+            if (bSensor < 0.05f)
+            {
+                Debug.DrawLine(r.origin, hit.point, Color.red);
+            }
+            else
+            {
+                Debug.DrawLine(r.origin, hit.point, Color.green);
+            }
         }
 
         r.direction = c;
@@ -134,7 +151,15 @@ public class CarController : MonoBehaviour
         if (Physics.Raycast(r, out hit))
         {
             cSensor = hit.distance / 30;
-            Debug.DrawLine(r.origin, hit.point, Color.red);
+
+            if (cSensor < 0.05f)
+            {
+                Debug.DrawLine(r.origin, hit.point, Color.red);
+            }
+            else
+            {
+                Debug.DrawLine(r.origin, hit.point, Color.green);
+            }
         }
     }
 

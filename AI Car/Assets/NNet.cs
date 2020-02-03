@@ -9,6 +9,7 @@ using Random = UnityEngine.Random;
 
 public class NNet : MonoBehaviour
 {
+    public int id;
     public Matrix<float> inputLayer = Matrix<float>.Build.Dense(1, 3);
 
     public List<Matrix<float>> hiddenLayers = new List<Matrix<float>>();
@@ -36,7 +37,7 @@ public class NNet : MonoBehaviour
             hiddenLayers.Add(f);
 
             biases.Add(Random.Range(-1f, 1f));
-
+            
             //Weights
             if(i == 0)
             {
@@ -54,6 +55,7 @@ public class NNet : MonoBehaviour
         Matrix<float> OutputWeight = Matrix<float>.Build.Dense(hiddenNeuronCount, 2);
         weights.Add(OutputWeight);
         biases.Add(Random.Range(-1f, 1f));
+        
 
         RandomiseWeight();
 
@@ -72,6 +74,52 @@ public class NNet : MonoBehaviour
                     weights[i][x, y] = Random.Range(-1f, 1f);
                 }
             }
+        }
+    }
+
+    public NNet InitialiseCopy(int hiddenLayerCount, int hiddenNeuronCount)
+    {
+        NNet n = new NNet();
+
+        List<Matrix<float>> newWeights = new List<Matrix<float>>();
+
+        for(int i = 0; i < this.weights.Count; i++)
+        {
+            Matrix<float> currentWeight = Matrix<float>.Build.Dense(weights[i].RowCount, weights[i].ColumnCount);
+
+            for(int x = 0; x < currentWeight.RowCount; x++)
+            {
+                for(int y = 0; y < currentWeight.ColumnCount; y++)
+                {
+                    currentWeight[x, y] = weights[i][x, y];
+                }
+            }
+
+            newWeights.Add(currentWeight);
+        }
+
+        List<float> newBiases = new List<float>();
+
+        newBiases.AddRange(biases);
+
+        n.weights = newWeights;
+        n.biases = newBiases;
+
+        n.InitialiseHidden(hiddenLayerCount, hiddenNeuronCount);
+
+        return n;
+    }
+
+    public void InitialiseHidden(int hiddenLayerCount, int hiddenNeuronCount)
+    {
+        inputLayer.Clear();
+        hiddenLayers.Clear();
+        outputLayer.Clear();
+
+        for(int i = 0; i < hiddenLayerCount + 1; i++)
+        {
+            Matrix<float> newHiddenLayer = Matrix<float>.Build.Dense(1, hiddenNeuronCount);
+            hiddenLayers.Add(newHiddenLayer);
         }
     }
 

@@ -1,0 +1,3 @@
+metadata/
+AI car/
+Temp/

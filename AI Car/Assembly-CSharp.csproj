@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\CarController.cs" />
+    <Compile Include="Assets\GeneticManager.cs" />
     <Compile Include="Assets\NNet.cs" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>C:/Users/zaviy/Documents/GitHub/MachineLearningCar/AI Car/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
