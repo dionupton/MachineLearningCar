@@ -1,3 +1,2 @@
-metadata/
-AI car/
-Temp/
+**/metadata/
+**/Temp/
